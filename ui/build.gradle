@@ -1,0 +1,55 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
+    }
+}
+
+buildDir = 'buildJar'
+
+apply plugin: 'java'
+apply plugin: "com.moowork.node"
+
+
+
+
+node {
+    version = '8.11.3'
+    npmVersion = '5.8.0'
+    download = true
+}
+
+jar {
+    from('build') {
+        into '/static'
+    }
+}
+
+task buildFrontend(type: NpmTask) {
+    args = ['run', 'build']
+}
+
+task npmInstallTask(type: NpmTask) {
+    args = ['install']
+}
+
+task npmStartLocal(type: NpmTask) {
+    args = ['start']
+}
+
+
+
+buildFrontend.dependsOn(npmInstallTask)
+jar.dependsOn(buildFrontend)
+assemble.dependsOn(jar)
+
+clean {
+    delete "${buildDir}"
+    delete "build"
+    delete "node_modules"
+}

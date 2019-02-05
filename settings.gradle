@@ -1,0 +1,5 @@
+rootProject.name = 'int20h'
+
+include 'int20h-web'
+include 'ui'
+
