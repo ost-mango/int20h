@@ -2,11 +2,14 @@ package com.mango.int20hweb.domain.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.core.io.FileSystemResource;
+
+import java.io.File;
 
 @Data
 @AllArgsConstructor
 public class ImageTuple {
-    public String id;
-    public FileSystemResource image;
+    private File original;
+    private File thumbnail;
+    private Emotion emotion;
+
 }
