@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation(compile(':ui'))
+//    implementation(project(':ui'))
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.springframework.boot:spring-boot-configuration-processor'
     compileOnly 'org.projectlombok:lombok'
