@@ -3,22 +3,20 @@ package com.mango.int20hweb.service;
 import com.flickr4java.flickr.Flickr;
 import com.flickr4java.flickr.FlickrException;
 import com.flickr4java.flickr.photos.Photo;
-import com.flickr4java.flickr.photos.PhotoList;
 import com.flickr4java.flickr.photos.SearchParameters;
 import com.flickr4java.flickr.photos.Size;
-import com.flickr4java.flickr.photosets.Photoset;
-import com.flickr4java.flickr.tags.Cluster;
 import com.mango.int20hweb.config.flickr.FlickrApiProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -32,14 +30,14 @@ public class FlickrService {
     private FlickrApiProperties flickrApiProperties;
 
 
-    public List<File> getImagesAsFile(){
-       return getPhotos().stream()
-               .map(photo -> getImage(photo, String.format(flickrApiProperties.getOutputPhotoDir() + "\\file%s.jpg", Math.random())))
-               .peek(File::deleteOnExit)
-               .collect(Collectors.toList());
+    public List<File> getImagesAsFile() {
+        return getPhotos().stream()
+                .map(photo -> getImage(photo, String.format(flickrApiProperties.getOutputPhotoDir() + "\\file%s.jpg", Math.random())))
+                .peek(File::deleteOnExit)
+                .collect(Collectors.toList());
     }
 
-    private Set<Photo> getPhotos(){
+    public Set<Photo> getPhotos() {
         Set<Photo> photoList = new LinkedHashSet<>();
         for (List<String> list : flickrApiProperties.getPhotosetIdListByUserId().values()) {
             photoList.addAll(list.stream().flatMap(photosetId -> getPhotoListByPhotoset(photosetId).stream()).collect(Collectors.toList()));
@@ -49,11 +47,10 @@ public class FlickrService {
     }
 
 
-    private File getImage(Photo photo, String pathname){
-        System.out.println(1);
+    public File getImage(Photo photo, String pathname) {
         File outputFile = new File(pathname);
         try {
-            ImageIO.write(flickr.getPhotosInterface().getImage(photo,Size.LARGE),"jpg", outputFile);
+            ImageIO.write(flickr.getPhotosInterface().getImage(photo, Size.LARGE), "jpg", outputFile);
         } catch (FlickrException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -61,6 +58,10 @@ public class FlickrService {
         }
 
         return outputFile;
+    }
+
+    public File getImage(Photo photo) {
+        return getImage(photo, String.format(flickrApiProperties.getOutputPhotoDir() + "\\file%s_large.jpg", Math.random()));
     }
 
 

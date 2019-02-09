@@ -11,65 +11,39 @@ class Album extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            images: [{
-                src: "https://c2.staticflickr.com/9/8817/28973449265_07e3aa5d2e_b.jpg",
-                thumbnail: "https://c2.staticflickr.com/9/8817/28973449265_07e3aa5d2e_n.jpg",
-                thumbnailWidth: 320,
-                thumbnailHeight: 174
-            },
-                {
-                    src: "https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_b.jpg",
-                    thumbnail: "https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_n.jpg",
-                    thumbnailWidth: 320,
-                    thumbnailHeight: 212
-                },
-
-                {
-                    src: "https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_b.jpg",
-                    thumbnail: "https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_n.jpg",
-                    thumbnailWidth: 320,
-                    thumbnailHeight: 212
-                }]
+            images: []
         }
+    }
+
+    loadImages(emotion, startIdx, count) {
+        console.log(this.state.images)
+
+        this.props.getThumbnailImagesInfo(emotion, startIdx, count)
+            .then(() => {
+                let newState = this.state;
+                newState.images = JSON.parse(JSON.stringify(newState.images));
+                this.props.data.filter(imageInfoDto => (newState.images.find(img => img.id === imageInfoDto.id) == null)).forEach(imageInfoDto => {
+                    let newImageEntry = {
+                        src: BASE_URL + "/images/originals/" + imageInfoDto.id,
+                        thumbnail: BASE_URL + "/images/thumbnails/" + imageInfoDto.id,
+                        thumbnailWidth: imageInfoDto.thumbnailWidth,
+                        thumbnailHeight: imageInfoDto.thumbnailHeight
+                    };
+                    newState.images.push(newImageEntry);
+                } );
+                newState.currentIdx = startIdx + count;
+                this.setState(newState);
+            });
     }
 
     componentDidMount() {
-        this.props.getThumbnailImagesInfo(null, 0, 10);
-        window.addEventListener('scroll', this.handleScroll);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('scroll', this.handleScroll);
-    }
-
-    handleScroll(event) { //todo load on scroll
-        let scrollTop = event.srcElement.body.scrollTop,
-            itemTranslate = Math.min(0, scrollTop/3 - 60);
-
-        this.setState({
-            transform: itemTranslate
-        });
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (JSON.stringify(prevProps.data) === JSON.stringify(this.props.data)) {
-            let newState = this.state;
-            this.props.data.forEach(imageInfoDto => {
-                let newImageEntry = {
-                    src: BASE_URL + "/images/originals/" + imageInfoDto.id,
-                    thumbnail: BASE_URL + "/images/thumbnails/" + imageInfoDto.id,
-                    thumbnailWidth: imageInfoDto.width,
-                    thumbnailHeight: imageInfoDto.height,
-                    emotion: imageInfoDto.emotion
-                };
-                newState.images.push(newImageEntry);
-            } );
-            this.setState(newState);
-        }
+        this.loadImages(null, 0, 30);
     }
 
     render() {
         //todo implement filtering logic
+
+        let images = this.state.images;
         return (
             <div>
                 <Card border="dark" color="dark" className="text-center main-card">
@@ -77,8 +51,13 @@ class Album extends Component {
                         <CardTitle><h1 id="title">The best album</h1></CardTitle>
                         <CardSubtitle className="mb-2 text-muted"><h3>Ever</h3></CardSubtitle>
                         <FilterComponent/>
-                        <Gallery images={this.state.images} enableImageSelection={false}/>
+                        {this.state.images.length > 0 &&
+                        <Gallery images={images} enableImageSelection={false}/>}
+
                     </CardBody>
+                    <div className="btn-group-toggle" data-toggle="buttons">
+                        <button className="btn btn-secondary" onClick={() => this.loadImages(null, this.state.currentIdx, 30)}>Load more</button>
+                    </div>
                 </Card>
             </div>
         );
@@ -93,9 +72,10 @@ function mapDispatchToProps(dispatch) {
 }
 
 function mapStateToProps(state) {
-    const {data} = state.thumbnailImagesInfo;
+    const {data, isFetching} = state.thumbnailImagesInfo;
+
     return {
-        data
+        data, isFetching
     }
 }
 

@@ -30,7 +30,7 @@ public class ImageLoadController {
     }
 
     @RequestMapping(value = "/images/thumbnails/{imageId}", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> getThumbnailImage(@RequestAttribute String imageId) {
+    public ResponseEntity<byte[]> getThumbnailImage(@PathVariable String imageId) {
         byte[] data = imageManagementService.getThumbnailImage(imageId);
 
         HttpHeaders headers = new HttpHeaders();
@@ -40,7 +40,7 @@ public class ImageLoadController {
     }
 
     @RequestMapping(value = "/images/originals/{imageId}", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> getOriginalImage(@RequestAttribute String imageId) {
+    public ResponseEntity<byte[]> getOriginalImage(@PathVariable String imageId) {
         byte[] data = imageManagementService.getOriginalImage(imageId);
 
         HttpHeaders headers = new HttpHeaders();

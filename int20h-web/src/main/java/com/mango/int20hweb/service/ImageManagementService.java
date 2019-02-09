@@ -42,6 +42,9 @@ public class ImageManagementService {
 
     public List<ImageInfoDto> getThumbnailImagesInRange(Emotion emotion, Integer startIdx, Integer count) {
         List<String> imageIdList = imageRegistry.get(emotion);
+        if (startIdx > imageIdList.size()) {
+            return Collections.emptyList();
+        }
         if ((startIdx + count) > imageIdList.size()) {
             return getImagesInfo(imageIdList);
         } else {

@@ -3,6 +3,7 @@ package com.mango.int20hweb.service;
 import com.mango.int20hweb.config.facepp.FaceppApiProperties;
 import com.mango.int20hweb.domain.enums.Emotion;
 import com.mango.int20hweb.dto.facepp.DetectFaceResponseDto;
+import com.mango.int20hweb.dto.facepp.FaceAttributesDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -44,9 +42,11 @@ public class FaceppService {
         Arrays.stream(Emotion.values()).forEach(emotion -> emotionIntegerMap.put(emotion, 0));
 
         detectFaceResponseDto.getFaceDtoList().stream()
-                .map(faceDto -> faceDto.getAttributes().getEmotions().entrySet().stream()
-                        .max(Comparator.comparingDouble(Map.Entry<Emotion, Double>::getValue))
-                        .map(Map.Entry::getKey).orElse(Emotion.NEUTRAL))
+                .peek(System.err::println)
+                .map(faceDto ->  Optional.ofNullable(faceDto.getAttributes()).map(faceAttributesDto -> faceAttributesDto.getEmotions().entrySet().stream()
+                            .max(Comparator.comparingDouble(Map.Entry<Emotion, Double>::getValue))
+                            .map(Map.Entry::getKey).orElse(Emotion.NEUTRAL)).orElse(Emotion.NEUTRAL)
+                )
                 .forEach(emotion -> emotionIntegerMap.merge(emotion, 1, ((count1, count2) -> count1 + count2)));
         return emotionIntegerMap.entrySet().stream().max(Comparator.comparingInt(Map.Entry<Emotion, Integer>::getValue))
                 .map(Map.Entry::getKey).orElse(Emotion.NEUTRAL);

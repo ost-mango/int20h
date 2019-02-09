@@ -17,7 +17,7 @@ public class CacheConfig {
     public ConcurrentSkipListMap<Emotion, List<String>> imageRegistry() {
         ConcurrentSkipListMap<Emotion, List<String>> concurrentSkipListMap =  new ConcurrentSkipListMap<>();
         Arrays.stream(Emotion.values()).forEach(emotion -> concurrentSkipListMap.put(emotion, new LinkedList<>()));
-        return new ConcurrentSkipListMap<>();
+        return concurrentSkipListMap;
     }
 
     @Bean
