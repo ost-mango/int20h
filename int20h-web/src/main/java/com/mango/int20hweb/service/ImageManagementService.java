@@ -1,7 +1,7 @@
 package com.mango.int20hweb.service;
 
+import com.mango.int20hweb.domain.ImageTuple;
 import com.mango.int20hweb.domain.enums.Emotion;
-import com.mango.int20hweb.domain.enums.ImageTuple;
 import com.mango.int20hweb.dto.ImageInfoDto;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.IOUtils;
@@ -36,7 +36,7 @@ public class ImageManagementService {
         return imageInfoRegistry.get(id);
     }
 
-    public List<ImageInfoDto> getThumbnailImages(Emotion emotion, Integer startIdx, Integer count) {
+    public List<ImageInfoDto> getThumbnailImagesInfo(Emotion emotion, Integer startIdx, Integer count) {
         return emotion == null ? getRandomImages(count) : getThumbnailImagesInRange(emotion, startIdx == null ? 0 : startIdx, count);
     }
 

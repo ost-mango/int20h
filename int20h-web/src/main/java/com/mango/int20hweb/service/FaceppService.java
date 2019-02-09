@@ -15,6 +15,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -36,8 +37,9 @@ public class FaceppService {
 
     private FaceppApiProperties faceppApiProperties;
 
-    public Emotion matchEmotion(FileSystemResource file) {
-        DetectFaceResponseDto detectFaceResponseDto = analyseImage(file);
+    public Emotion matchEmotion(File file) {
+        FileSystemResource fileSystemResource = new FileSystemResource(file);
+        DetectFaceResponseDto detectFaceResponseDto = analyseImage(fileSystemResource);
         Map<Emotion, Integer> emotionIntegerMap = new HashMap<>();
         Arrays.stream(Emotion.values()).forEach(emotion -> emotionIntegerMap.put(emotion, 0));
 

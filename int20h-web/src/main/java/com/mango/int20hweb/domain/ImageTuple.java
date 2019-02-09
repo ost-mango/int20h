@@ -1,5 +1,6 @@
-package com.mango.int20hweb.domain.enums;
+package com.mango.int20hweb.domain;
 
+import com.mango.int20hweb.domain.enums.Emotion;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

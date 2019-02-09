@@ -23,10 +23,10 @@ public class ImageLoadController {
     private ImageManagementService imageManagementService;
 
     @RequestMapping(value = "/images/thumbnails", method = RequestMethod.GET)
-    public ResponseDto<List<ImageInfoDto>> getThumbnailImages(@RequestParam(value = "emotion", required = false) Emotion emotion,
+    public ResponseDto<List<ImageInfoDto>> getThumbnailImagesInfo(@RequestParam(value = "emotion", required = false) Emotion emotion,
                                                               @RequestParam(value = "startIdx", required = false) Integer startIdx,
                                                               @RequestParam(value = "count") Integer count) {
-        return ResponseDto.of(imageManagementService.getThumbnailImages(emotion, startIdx, count));
+        return ResponseDto.of(imageManagementService.getThumbnailImagesInfo(emotion, startIdx, count));
     }
 
     @RequestMapping(value = "/images/thumbnails/{imageId}", method = RequestMethod.GET)

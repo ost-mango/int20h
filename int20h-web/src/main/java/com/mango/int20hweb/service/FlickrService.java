@@ -35,6 +35,7 @@ public class FlickrService {
     public List<File> getImagesAsFile(){
        return getPhotos().stream()
                .map(photo -> getImage(photo, String.format(flickrApiProperties.getOutputPhotoDir() + "\\file%s.jpg", Math.random())))
+               .peek(File::deleteOnExit)
                .collect(Collectors.toList());
     }
 

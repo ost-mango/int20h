@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {HashRouter, Route, Switch} from 'react-router-dom';
+import {HashRouter, Redirect, Route, Switch} from 'react-router-dom';
 import './App.css';
 import Album from "./Album";
 
@@ -15,6 +15,7 @@ class MainRouter extends Component {
                         <HashRouter>
                             <Switch>
                                 <Route path="/album" name="Album" component={Album}/>
+                                <Redirect from="/" to="/album"/>
                             </Switch>
                         </HashRouter>
                     </div>
