@@ -42,7 +42,6 @@ public class FaceppService {
         Arrays.stream(Emotion.values()).forEach(emotion -> emotionIntegerMap.put(emotion, 0));
 
         detectFaceResponseDto.getFaceDtoList().stream()
-                .peek(System.err::println)
                 .map(faceDto ->  Optional.ofNullable(faceDto.getAttributes()).map(faceAttributesDto -> faceAttributesDto.getEmotions().entrySet().stream()
                             .max(Comparator.comparingDouble(Map.Entry<Emotion, Double>::getValue))
                             .map(Map.Entry::getKey).orElse(Emotion.NEUTRAL)).orElse(Emotion.NEUTRAL)

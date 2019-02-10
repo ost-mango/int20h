@@ -58,7 +58,7 @@ public class LocalCacheLoadService {
         ImageTuple imageTuple = new ImageTuple();
         File original = flickrService.getImage(photo);
         Emotion emotion = faceppService.matchEmotion(original);
-        File thumbnail = null;
+        File thumbnail;
         int height;
         int width;
             try {
@@ -73,6 +73,7 @@ public class LocalCacheLoadService {
         ImageInfoDto imageInfoDto = new ImageInfoDto(id, emotion, height, width);
         imageTuple.setOriginal(original);
         imageTuple.setThumbnail(thumbnail);
+        imageTuple.setEmotion(emotion);
         original.deleteOnExit();
         thumbnail.deleteOnExit();
 

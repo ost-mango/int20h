@@ -11,29 +11,47 @@ class Album extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            images: []
+            images: [],
+            filters: null
         }
     }
 
-    loadImages(emotion, startIdx, count) {
-        console.log(this.state.images)
+    onFilterChange(newFilters) {
+        this.loadImages(newFilters, 0, 30);
+    }
 
-        this.props.getThumbnailImagesInfo(emotion, startIdx, count)
+    loadImages(filters, startIdx, count) {
+        console.log(filters)
+        let filterParameter = filters != null && (filters.length > 0)
+            ? filters.join()
+            : null;
+
+        this.props.getThumbnailImagesInfo(filterParameter, startIdx, count)
             .then(() => {
                 let newState = this.state;
                 newState.images = JSON.parse(JSON.stringify(newState.images));
+                if (startIdx === 0) {
+                    newState.images.splice(0, newState.images.length);
+                }
+                if (filters == null || filters.length ===0) {
+                    newState.filters = null;
+                } else {
+                    newState.filters = filters;
+                }
+
                 this.props.data.filter(imageInfoDto => (newState.images.find(img => img.id === imageInfoDto.id) == null)).forEach(imageInfoDto => {
                     let newImageEntry = {
                         src: BASE_URL + "/images/originals/" + imageInfoDto.id,
                         thumbnail: BASE_URL + "/images/thumbnails/" + imageInfoDto.id,
                         thumbnailWidth: imageInfoDto.thumbnailWidth,
-                        thumbnailHeight: imageInfoDto.thumbnailHeight
+                        thumbnailHeight: imageInfoDto.thumbnailHeight,
+                        emotion: imageInfoDto.emotion
                     };
                     newState.images.push(newImageEntry);
-                } );
+                });
                 newState.currentIdx = startIdx + count;
                 this.setState(newState);
-            });
+            })
     }
 
     componentDidMount() {
@@ -50,13 +68,15 @@ class Album extends Component {
                     <CardBody>
                         <CardTitle><h1 id="title">The best album</h1></CardTitle>
                         <CardSubtitle className="mb-2 text-muted"><h3>Ever</h3></CardSubtitle>
-                        <FilterComponent/>
+                        <FilterComponent onFilterChange={this.onFilterChange.bind(this)}/>
                         {this.state.images.length > 0 &&
                         <Gallery images={images} enableImageSelection={false}/>}
 
                     </CardBody>
                     <div className="btn-group-toggle" data-toggle="buttons">
-                        <button className="btn btn-secondary" onClick={() => this.loadImages(null, this.state.currentIdx, 30)}>Load more</button>
+                        <button className="btn btn-secondary"
+                                onClick={() => this.loadImages(this.state.filters, this.state.currentIdx, 30)}>Load more
+                        </button>
                     </div>
                 </Card>
             </div>

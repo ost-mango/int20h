@@ -36,11 +36,14 @@ public class ImageManagementService {
         return imageInfoRegistry.get(id);
     }
 
-    public List<ImageInfoDto> getThumbnailImagesInfo(Emotion emotion, Integer startIdx, Integer count) {
-        return emotion == null ? getRandomImages(count) : getThumbnailImagesInRange(emotion, startIdx == null ? 0 : startIdx, count);
+    public List<ImageInfoDto> getThumbnailImagesInfo(List<Emotion> emotions, Integer startIdx, Integer count) {
+        return emotions == null || emotions.isEmpty()
+                ? getRandomImages(count)
+                : emotions.stream().flatMap(emotion -> getThumbnailImagesInRange(emotion, startIdx == null ? 0 : startIdx, count).stream()).collect(Collectors.toList());
     }
 
     public List<ImageInfoDto> getThumbnailImagesInRange(Emotion emotion, Integer startIdx, Integer count) {
+        System.err.println(emotion);
         List<String> imageIdList = imageRegistry.get(emotion);
         if (startIdx > imageIdList.size()) {
             return Collections.emptyList();

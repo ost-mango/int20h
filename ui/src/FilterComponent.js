@@ -7,7 +7,7 @@ class FilterComponent extends Component {
         super(props);
         this.onEmotionCheck = this.onEmotionCheck.bind(this);
         let emotionsSelected = {};
-            Object.keys(Emotion).forEach(emotion => emotionsSelected[emotion] = true);
+            Object.keys(Emotion).forEach(emotion => emotionsSelected[emotion] = false);
         this.state = {
             emotionsSelected: emotionsSelected
         }
@@ -16,7 +16,7 @@ class FilterComponent extends Component {
     onEmotionCheck(emotion) {
         let newState = this.state;
         newState.emotionsSelected[emotion] = !newState.emotionsSelected[emotion];
-        // this.props.onEmotionChange(newState.emotionsSelected);
+        this.props.onFilterChange(Object.keys(newState.emotionsSelected).filter(key => newState.emotionsSelected[key]));
         this.setState(newState);
     }
 
