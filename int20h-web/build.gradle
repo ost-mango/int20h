@@ -23,9 +23,11 @@ repositories {
 }
 
 dependencies {
-    implementation(compile(':ui'))
+//    implementation(project(':ui'))
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.apache.commons:commons-io:1.3.2'
     compileOnly 'org.springframework.boot:spring-boot-configuration-processor'
     compileOnly 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    compile 'com.flickr4java:flickr4java:2.19'
 }

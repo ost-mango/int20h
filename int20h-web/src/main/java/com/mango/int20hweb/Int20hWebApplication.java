@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Int20hWebApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(Int20hWebApplication.class, args);
     }
 

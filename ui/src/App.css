@@ -30,3 +30,18 @@
     transform: rotate(360deg);
   }
 }
+
+body {
+  background-color: #343a40 !important;
+}
+
+.main-card {
+  border: none !important;
+}
+#title {
+  color: white;
+}
+
+.footer{
+  padding-top: 50px;
+}
