@@ -15,7 +15,7 @@ public class FlickrApiProperties {
 
     private String apiKey;
     private String apiSecret;
-    private Map<String,List<String>> photosetIdListByUserId;
+    private List<String> photosetIdList;
     private String[] tagList;
     private String outputPhotoDir;
 }

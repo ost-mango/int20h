@@ -3,20 +3,22 @@ package com.mango.int20hweb.service;
 import com.flickr4java.flickr.Flickr;
 import com.flickr4java.flickr.FlickrException;
 import com.flickr4java.flickr.photos.Photo;
+import com.flickr4java.flickr.photos.PhotoList;
 import com.flickr4java.flickr.photos.SearchParameters;
 import com.flickr4java.flickr.photos.Size;
+import com.flickr4java.flickr.photosets.Photoset;
+import com.flickr4java.flickr.tags.Cluster;
 import com.mango.int20hweb.config.flickr.FlickrApiProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -37,10 +39,10 @@ public class FlickrService {
                 .collect(Collectors.toList());
     }
 
-    public Set<Photo> getPhotos() {
+    public Set<Photo> getPhotos(){
         Set<Photo> photoList = new LinkedHashSet<>();
-        for (List<String> list : flickrApiProperties.getPhotosetIdListByUserId().values()) {
-            photoList.addAll(list.stream().flatMap(photosetId -> getPhotoListByPhotoset(photosetId).stream()).collect(Collectors.toList()));
+        for (String photosetId : flickrApiProperties.getPhotosetIdList()) {
+            photoList.addAll(getPhotoListByPhotoset(photosetId));
         }
         photoList.addAll(getPhotoListByTags(flickrApiProperties.getTagList()));
         return photoList;
@@ -50,7 +52,7 @@ public class FlickrService {
     public File getImage(Photo photo, String pathname) {
         File outputFile = new File(pathname);
         try {
-            ImageIO.write(flickr.getPhotosInterface().getImage(photo, Size.LARGE), "jpg", outputFile);
+            ImageIO.write(flickr.getPhotosInterface().getImage(photo,Size.LARGE),"jpg", outputFile);
         } catch (FlickrException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -68,6 +70,7 @@ public class FlickrService {
     private Set<Photo> getPhotoListByPhotoset(String photosetId) {
         Set<Photo> photoSet = new LinkedHashSet<>();
         int pageCount = 0;
+        log.info("Started loading photos from Flickr by photosetId: " + photosetId);
         while (true) {
             try {
                 List list = flickr.getPhotosetsInterface().getPhotos(photosetId, 100, pageCount);
@@ -81,6 +84,7 @@ public class FlickrService {
                 break;
             }
         }
+        log.info("Finished loading photos from Flickr by tags: " + photosetId + ". Loaded: " + photoSet.size());
         return photoSet;
     }
 
@@ -88,22 +92,24 @@ public class FlickrService {
     private Set<Photo> getPhotoListByTags(String[] tags) {
         SearchParameters searchParameters = new SearchParameters();
         searchParameters.setTags(tags);
-        Set<Photo> photoList = new LinkedHashSet<>();
+        Set<Photo> photoSet = new LinkedHashSet<>();
         int pageCount = 0;
+        log.info("Started loading photos from Flickr by tags: " + Arrays.toString(tags));
         while (true) {
             try {
                 List list = flickr.getPhotosInterface().search(searchParameters, 100, pageCount);
                 if (list.size() == 0) {
                     break;
                 }
-                photoList.addAll(list);
+                photoSet.addAll(list);
                 pageCount++;
             } catch (FlickrException e) {
                 e.printStackTrace();
                 break;
             }
         }
-        return photoList;
+        log.info("Finished loading photos from Flickr by tags: " + Arrays.toString(tags) + ". Loaded: " + photoSet.size());
+        return photoSet;
     }
 
 }
